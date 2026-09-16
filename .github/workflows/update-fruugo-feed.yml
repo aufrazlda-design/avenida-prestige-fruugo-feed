@@ -1,0 +1,38 @@
+name: Update Fruugo feed
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate Fruugo CSV
+        env:
+          SUPPLIER_FEED_URL: ${{ secrets.SUPPLIER_FEED_URL }}
+        run: python fruugo_feed_builder.py --output docs/fruugo.csv
+
+      - name: Publish updated feed
+        run: |
+          git config user.name "Avenida Prestige Feed"
+          git config user.email "contact@avenidaprestige.com"
+          git add docs/fruugo.csv
+          if git diff --cached --quiet; then
+            echo "No feed changes"
+          else
+            git commit -m "Update Fruugo feed"
+            git push
+          fi
