@@ -30,7 +30,8 @@ OUTPUT_FIELDS = [
     "Attribute3", "Currency", "NormalPriceWithoutVAT", "VATRate",
 ]
 
-BAG_CATEGORY = "Apparel & Accessories > Handbags, Wallets & Cases > Handbags"
+WOMENS_HANDBAG_CATEGORY = "Apparel & Accessories > Handbags, Wallets & Cases > Handbags > Womens"
+FANNY_PACK_CATEGORY = "Luggage & Bags > Fanny Packs"
 WOMENS_SUNGLASSES_CATEGORY = (
     "Apparel & Accessories > Clothing Accessories > Sunglasses > Womens"
 )
