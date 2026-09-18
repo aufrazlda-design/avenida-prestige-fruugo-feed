@@ -2,6 +2,9 @@ name: Prepare Kiorlay 5-watch images
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/kiorlay-images-5.yml'
 
 permissions:
   contents: write
