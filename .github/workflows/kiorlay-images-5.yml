@@ -1,0 +1,89 @@
+name: Prepare Kiorlay 5-watch images
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prepare-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Pillow and requests
+        run: pip install pillow requests
+
+      - name: Download and resize real supplier images
+        run: |
+          python - <<'PY'
+          from PIL import Image, ImageChops
+          from io import BytesIO
+          import requests
+
+          products = {
+              "CVZ0054RBLS": [
+                  "https://b2b.timeshop24.com/media/catalog/product/c/v/cvz0054rbls_1.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/c/a/carl_von_zeyten_box_15_1.jpg",
+              ],
+              "8590-3": [
+                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-8590-3-herrenuhr-friedrichshafen-automatik-002.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-8590-3-herrenuhr-friedrichshafen-automatik-mood-004.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-8590-3-herrenuhr-friedrichshafen-automatik-mood-002.jpg",
+              ],
+              "SM30207.05": [
+                  "https://b2b.timeshop24.com/media/catalog/product/s/m/sm30207_05_front.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/s/m/sm30207_05.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/s/w/swiss-military-chrono-ag-box_214_40.jpg",
+              ],
+              "VEAFA0124": [
+                  "https://b2b.timeshop24.com/media/catalog/product/v/e/veafa0124.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/v/e/versace_box_256.jpg",
+              ],
+              "242029": [
+                  "https://b2b.timeshop24.com/media/catalog/product/v/i/victorinox_242029_front_1.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/v/i/victorinox_242029_front_2.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/v/i/victorinox_242029_side_1.jpg",
+              ],
+          }
+
+          session = requests.Session()
+          session.headers.update({"User-Agent": "Mozilla/5.0"})
+
+          def trim_white(img):
+              img = img.convert("RGB")
+              bg = Image.new("RGB", img.size, "white")
+              diff = ImageChops.difference(img, bg).convert("L")
+              bbox = diff.point(lambda p: 255 if p > 12 else 0).getbbox()
+              return img.crop(bbox) if bbox else img
+
+          for ref, urls in products.items():
+              for i, url in enumerate(urls, 1):
+                  r = session.get(url, timeout=60)
+                  r.raise_for_status()
+                  img = Image.open(BytesIO(r.content))
+                  img = trim_white(img)
+
+                  canvas = Image.new("RGB", (1200, 1200), "white")
+                  img.thumbnail((900, 900), Image.Resampling.LANCZOS)
+                  x = (1200 - img.width) // 2
+                  y = (1200 - img.height) // 2
+                  canvas.paste(img, (x, y))
+                  canvas.save(f"{ref}_{i}.jpg", "JPEG", quality=94, optimize=True)
+                  print(ref, i, url)
+          PY
+
+      - name: Commit resized images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CVZ0054RBLS_*.jpg 8590-3_*.jpg SM30207.05_*.jpg VEAFA0124_*.jpg 242029_*.jpg
+          git commit -m "Prepare Kiorlay watch images" || exit 0
+          git push
