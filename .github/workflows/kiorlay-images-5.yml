@@ -1,4 +1,4 @@
-name: Prepare Kiorlay 10-watch images
+name: Prepare Kiorlay next 10-watch images
 
 on:
   workflow_dispatch:
@@ -32,55 +32,55 @@ jobs:
           import requests
 
           products = {
-              "AW1765-88X": [
-                  "https://b2b.timeshop24.com/media/catalog/product/a/w/aw1765-88x.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/c/i/citizen_geh_use-schwarz_-ziffernblatt-orange_-armband-schwarz_aw1765-88x.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/c/i/citizen_geh_use-schwarz_-ziffernblatt-orange_-armband-schwarz_aw1765-88x_3.jpg",
+              "NK0020-55E": [
+                  "https://b2b.timeshop24.com/media/catalog/product/n/k/nk0020-55e.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/n/k/nk0020-55e_s.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/n/k/nk0020-55e_b.jpg",
               ],
-              "BN0151-17L": [
-                  "https://b2b.timeshop24.com/media/catalog/product/b/n/bn0151-17l_1.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/c/i/citizen_geh_use-silberfarben_-ziffernblatt-blau_-armband-blau_bn0151-17l_2.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/c/i/citizen_geh_use-silberfarben_-ziffernblatt-blau_-armband-blau_bn0151-17l_4.jpg",
+              "98B445": [
+                  "https://b2b.timeshop24.com/media/catalog/product/9/8/98b445.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/9/8/98b445_2.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/9/8/98b445_4.jpg",
               ],
-              "96B441": [
-                  "https://b2b.timeshop24.com/media/catalog/product/9/6/96b441.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/9/6/96b441_2.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/9/6/96b441_3.jpg",
+              "241920": [
+                  "https://b2b.timeshop24.com/media/catalog/product/2/4/241920.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/2/4/241920_front.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/2/4/241920_side.jpg",
               ],
-              "241902": [
-                  "https://b2b.timeshop24.com/media/catalog/product/2/4/241902_front.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/2/4/241902_front2.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/2/4/241902_side.jpg",
+              "84681": [
+                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-herrenuhr-automatik-gmt-84681-002.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-herrenuhr-automatik-gmt-84681-mood-006.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-herrenuhr-automatik-gmt-84681-mood-008.jpg",
               ],
-              "85363": [
-                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-8536-3-herrenuhr-friedrichshafen-002.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-8536-3-herrenuhr-friedrichshafen-mood-002.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/z/e/zeppelin-8536-3-herrenuhr-friedrichshafen-mood-004.jpg",
+              "1513937": [
+                  "https://b2b.timeshop24.com/media/catalog/product/1/5/1513937.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/1/5/1513937_side.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/1/5/1513937_back.jpg",
               ],
-              "SMWGC0000331": [
-                  "https://b2b.timeshop24.com/media/catalog/product/s/m/smwgc0000331_01_ead4915e-3628-4834-8ac5-cceb0bef085b.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/s/m/smwgc0000331_02_6ead8bc4-2e1c-488e-b106-60afa74bf6b4.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/s/m/smwgc0000331_03_1a7e6c8b-d3c6-4d25-b5ab-819fcf34265f.jpg",
+              "VEHC00519": [
+                  "https://b2b.timeshop24.com/media/catalog/product/v/e/vehc00519.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/v/e/vehc00519__side.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/v/e/vehc00519_virtus_side.jpg",
               ],
-              "VEVH00520": [
-                  "https://b2b.timeshop24.com/media/catalog/product/v/e/vevh00520.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/v/e/vevh00520_side.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/v/e/vevh00520_back.jpg",
+              "R8823118015": [
+                  "https://b2b.timeshop24.com/media/catalog/product/r/8/r8823118015.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/r/8/r8823118015_4.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/r/8/r8823118015_3.jpg",
               ],
-              "1513915": [
-                  "https://b2b.timeshop24.com/media/catalog/product/1/5/1513915.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/1/5/1513915_side.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/1/5/1513915_back.jpg",
+              "GW0814L3": [
+                  "https://b2b.timeshop24.com/media/catalog/product/g/w/gw0814l3.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/g/w/gw0814l3_q.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/g/w/gw0814l3_p.jpg",
               ],
-              "R8873621007": [
-                  "https://b2b.timeshop24.com/media/catalog/product/r/8/r8873621007_1.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/r/8/r8873621007_6.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/r/8/r8873621007_4.jpg",
+              "SMWGI0004205": [
+                  "https://b2b.timeshop24.com/media/catalog/product/s/m/smwgi0004205_01.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/s/m/smwgi0004205_02.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/s/m/smwgi0004205_03.jpg",
               ],
-              "GW0771L4": [
-                  "https://b2b.timeshop24.com/media/catalog/product/g/w/gw0771l4.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/g/w/gw0771l4_q.jpg",
-                  "https://b2b.timeshop24.com/media/catalog/product/g/w/gw0771l4_p.jpg",
+              "F20038-1": [
+                  "https://b2b.timeshop24.com/media/catalog/product/f/2/f20038_1.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/f/2/f20038_1_3.jpg",
+                  "https://b2b.timeshop24.com/media/catalog/product/f/2/f20038_1-_1_.jpg",
               ],
           }
 
@@ -114,6 +114,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add AW1765-88X_*.jpg BN0151-17L_*.jpg 96B441_*.jpg 241902_*.jpg 85363_*.jpg SMWGC0000331_*.jpg VEVH00520_*.jpg 1513915_*.jpg R8873621007_*.jpg GW0771L4_*.jpg
-          git commit -m "Prepare Kiorlay 10 watch images" || exit 0
+          git add NK0020-55E_*.jpg 98B445_*.jpg 241920_*.jpg 84681_*.jpg 1513937_*.jpg VEHC00519_*.jpg R8823118015_*.jpg GW0814L3_*.jpg SMWGI0004205_*.jpg F20038-1_*.jpg
+          git commit -m "Prepare next 10 Kiorlay watch images" || exit 0
           git push
