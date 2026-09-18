@@ -1,0 +1,38 @@
+name: Generate Kiorlay watch images
+
+on:
+  push:
+    paths:
+      - "kiorlay_watch_images.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests pillow
+
+      - name: Download and resize real supplier images
+        run: python kiorlay_watch_images.py
+
+      - name: Commit generated images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CVZ0054RBLS_*.jpg 8590-3_*.jpg SM30207.05_*.jpg VEAFA0124_*.jpg 242029_*.jpg
+          if git diff --cached --quiet; then
+            echo "No image changes to commit"
+          else
+            git commit -m "Generate resized Kiorlay watch images"
+            git push
+          fi
