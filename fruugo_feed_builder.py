@@ -129,7 +129,12 @@ def make_row(sku: str, product: dict[str, str], source: dict[str, str] | None) -
         "StockStatus": stock_status, "StockQuantity": stock_quantity,
         "PackageWeight": "", "Language": "en", "Title": product["title"],
         "Description": description, "AttributeColor": product["color"],
-        "AttributeSize": "", "Attribute1": "", "Attribute2": "", "Attribute3": "",
+        "AttributeSize": "",
+        # Fruugo Attribute1 is mapped in Catalogue Settings to "CE Mark".
+        # Sunglasses are PPE for protection against sunlight under Regulation (EU) 2016/425
+        # and therefore require CE marking. Fruugo expects "1" when the CE mark is present.
+        "Attribute1": "1" if product["category"] == WOMENS_SUNGLASSES_CATEGORY else "",
+        "Attribute2": "", "Attribute3": "",
         "Currency": "EUR", "NormalPriceWithoutVAT": normal_price, "VATRate": "23",
     }
 
