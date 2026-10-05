@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SELECTION_FILE = ROOT / "data" / "bg_selection.json"
-WATCH_PARTS = [ROOT / "data" / f"watch_part_{i:02d}.csv" for i in range(1, 6)]
+WATCH_SNAPSHOT_FILE = ROOT / "data" / "watch_snapshot.b64"
 
 OUTPUT_FIELDS = [
     "ProductId", "SkuId", "EAN", "ISBN", "Brand", "Category",
@@ -157,6 +157,10 @@ def description_for(row: dict[str, str]) -> str:
 def make_bg_row(pid: str, source: dict[str, str] | None, sunglasses: bool) -> dict[str, str]:
     product_id = f"AP{pid}"
     category = SUNGLASS_CATEGORY if sunglasses else BAG_CATEGORY
+    if not sunglasses:
+        bag_text = f"{source.get('Name', '') if source else ''} {source.get('Subcategory', '') if source else ''}".lower()
+        if any(term in bag_text for term in ("belt bag", "fanny", "waist bag")):
+            category = "Luggage & Bags > Fanny Packs"
 
     if source is None:
         row = {field: "" for field in OUTPUT_FIELDS}
@@ -208,10 +212,12 @@ def make_bg_row(pid: str, source: dict[str, str] | None, sunglasses: bool) -> di
 
 
 def load_watch_snapshot() -> list[dict[str, str]]:
-    rows: list[dict[str, str]] = []
-    for path in WATCH_PARTS:
-        with path.open("r", encoding="utf-8-sig", newline="") as stream:
-            rows.extend({field: row.get(field, "") for field in OUTPUT_FIELDS} for row in csv.DictReader(stream))
+    encoded = WATCH_SNAPSHOT_FILE.read_text(encoding="ascii").strip()
+    raw = zlib.decompress(base64.b64decode(encoded)).decode("utf-8")
+    rows = [
+        {field: row.get(field, "") for field in OUTPUT_FIELDS}
+        for row in csv.DictReader(io.StringIO(raw))
+    ]
     if len(rows) != 100:
         raise ValueError(f"Expected 100 watch rows, got {len(rows)}")
     return rows
