@@ -211,7 +211,7 @@ def load_watch_snapshot() -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
     for path in WATCH_PARTS:
         with path.open("r", encoding="utf-8-sig", newline="") as stream:
-            rows.extend(csv.DictReader(stream))
+            rows.extend({field: row.get(field, "") for field in OUTPUT_FIELDS} for row in csv.DictReader(stream))
     if len(rows) != 100:
         raise ValueError(f"Expected 100 watch rows, got {len(rows)}")
     return rows
