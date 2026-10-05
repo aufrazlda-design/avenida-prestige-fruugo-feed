@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SELECTION_FILE = ROOT / "data" / "bg_selection.json"
-WATCH_SNAPSHOT_FILE = ROOT / "data" / "watch_snapshot.b64"
+WATCH_PARTS = [ROOT / "data" / f"watch_part_{i:02d}.csv" for i in range(1, 6)]
 
 OUTPUT_FIELDS = [
     "ProductId", "SkuId", "EAN", "ISBN", "Brand", "Category",
@@ -208,9 +208,10 @@ def make_bg_row(pid: str, source: dict[str, str] | None, sunglasses: bool) -> di
 
 
 def load_watch_snapshot() -> list[dict[str, str]]:
-    encoded = WATCH_SNAPSHOT_FILE.read_text(encoding="ascii").strip()
-    raw = zlib.decompress(base64.b64decode(encoded)).decode("utf-8")
-    rows = list(csv.DictReader(io.StringIO(raw)))
+    rows: list[dict[str, str]] = []
+    for path in WATCH_PARTS:
+        with path.open("r", encoding="utf-8-sig", newline="") as stream:
+            rows.extend(csv.DictReader(stream))
     if len(rows) != 100:
         raise ValueError(f"Expected 100 watch rows, got {len(rows)}")
     return rows
