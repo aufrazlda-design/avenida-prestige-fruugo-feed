@@ -67,6 +67,7 @@ def clean(value: str | None) -> str:
     value = html.unescape(value or "")
     value = re.sub(r"<[^>]+>", " ", value)
     value = re.sub(r"https?://\S+|www\.\S+", " ", value, flags=re.IGNORECASE)
+    value = re.sub(r"\bbrand[ -]?new\b", "new", value, flags=re.IGNORECASE)
     value = re.sub(r"[\w.+-]+@[\w.-]+\.\w+", " ", value)
     value = re.sub(
         r"\b(?:shipping|delivery)\b[^.;]*[.;]?",
