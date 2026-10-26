@@ -41,13 +41,17 @@ FORBIDDEN_DESCRIPTION = re.compile(
 )
 
 
-def load_selection() -> tuple[list[str], list[str]]:
+def load_selection() -> tuple[list[str], list[str], list[str]]:
     data = json.loads(SELECTION_FILE.read_text(encoding="utf-8"))
     bags = [str(x) for x in data["bags"]]
     sunglasses = [str(x) for x in data["sunglasses"]]
-    if len(bags) != 350 or len(sunglasses) != 50:
-        raise ValueError(f"Expected 350 bags + 50 sunglasses, got {len(bags)} + {len(sunglasses)}")
-    return bags, sunglasses
+    additional_bags = [str(x) for x in data.get("additional_bags", [])]
+    if len(bags) != 350 or len(sunglasses) != 50 or len(additional_bags) != 500:
+        raise ValueError(
+            f"Expected 350 bags + 50 sunglasses + 500 additional bags, "
+            f"got {len(bags)} + {len(sunglasses)} + {len(additional_bags)}"
+        )
+    return bags, sunglasses, additional_bags
 
 
 def decimal_value(value: str | None) -> Decimal:
@@ -86,8 +90,9 @@ def margin_for(wholesale: Decimal) -> Decimal:
     return Decimal("120")
 
 
-def price_without_vat(wholesale: Decimal) -> Decimal:
-    result = (wholesale + Decimal("25") + margin_for(wholesale)) / Decimal("0.80")
+def price_without_vat(wholesale: Decimal, target_margin: Decimal | None = None) -> Decimal:
+    margin = target_margin if target_margin is not None else margin_for(wholesale)
+    result = (wholesale + Decimal("25") + margin) / Decimal("0.80")
     return result.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
 
@@ -155,7 +160,12 @@ def description_for(row: dict[str, str]) -> str:
     return result
 
 
-def make_bg_row(pid: str, source: dict[str, str] | None, sunglasses: bool) -> dict[str, str]:
+def make_bg_row(
+    pid: str,
+    source: dict[str, str] | None,
+    sunglasses: bool,
+    target_margin: Decimal | None = None,
+) -> dict[str, str]:
     product_id = f"AP{pid}"
     category = SUNGLASS_CATEGORY if sunglasses else BAG_CATEGORY
     if not sunglasses:
@@ -207,7 +217,7 @@ def make_bg_row(pid: str, source: dict[str, str] | None, sunglasses: bool) -> di
         "Attribute2": mpn,
         "Attribute3": model,
         "Currency": "EUR",
-        "NormalPriceWithoutVAT": str(price_without_vat(wholesale)) if wholesale > 0 else "",
+        "NormalPriceWithoutVAT": str(price_without_vat(wholesale, target_margin)) if wholesale > 0 else "",
         "VATRate": "23",
     }
 
@@ -225,15 +235,20 @@ def load_watch_snapshot() -> list[dict[str, str]]:
 
 
 def build(source: Path, output: Path) -> None:
-    bag_ids, sunglass_ids = load_selection()
-    live = load_bg(source, set(bag_ids) | set(sunglass_ids))
+    bag_ids, sunglass_ids, additional_bag_ids = load_selection()
+    wanted = set(bag_ids) | set(sunglass_ids) | set(additional_bag_ids)
+    live = load_bg(source, wanted)
 
     rows = [make_bg_row(pid, live.get(pid), False) for pid in bag_ids]
     rows.extend(make_bg_row(pid, live.get(pid), True) for pid in sunglass_ids)
     rows.extend(load_watch_snapshot())
+    rows.extend(
+        make_bg_row(pid, live.get(pid), False, Decimal("50"))
+        for pid in additional_bag_ids
+    )
 
-    if len(rows) != 500:
-        raise RuntimeError(f"Expected 500 rows, got {len(rows)}")
+    if len(rows) != 1000:
+        raise RuntimeError(f"Expected 1000 rows, got {len(rows)}")
 
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8", newline="") as stream:
