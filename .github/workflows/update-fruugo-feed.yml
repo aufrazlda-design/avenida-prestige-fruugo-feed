@@ -32,19 +32,26 @@ jobs:
           SUPPLIER_FEED_URL: ${{ secrets.SUPPLIER_FEED_URL }}
         run: python fruugo_feed_builder.py --output docs/fruugo.csv
 
-      - name: Validate 500-SKU output
+      - name: Validate 2000-SKU output
         run: |
           python - <<'PY'
           import csv
           with open("docs/fruugo.csv", encoding="utf-8", newline="") as f:
               rows = list(csv.DictReader(f))
-          assert len(rows) == 1000, f"Expected 1000 SKUs, got {len(rows)}"
-          assert sum(1 for r in rows if r["Category"].endswith("> Womens") and "Sunglasses" in r["Category"]) == 50
+          assert len(rows) == 2000, f"Expected 2000 SKUs, got {len(rows)}"
+          assert sum(1 for r in rows if "Sunglasses" in r["Category"]) == 250
           assert sum(1 for r in rows if r["ProductId"].startswith("APW")) == 100
-          assert sum(1 for r in rows if r["Attribute1"] == "1") == 50
-          assert sum(1 for r in rows if r["ProductId"].startswith("APW")) == 100
-          assert sum(1 for r in rows if r["Attribute1"] == "1") == 50
-          print("Validated: 1000 SKUs, including 500 additional bags")
+          assert sum(1 for r in rows if r["Attribute1"] == "1") == 250
+
+          product_ids = [r["ProductId"] for r in rows]
+          sku_ids = [r["SkuId"] for r in rows]
+          eans = [r["EAN"] for r in rows if r["EAN"]]
+          assert len(set(product_ids)) == len(product_ids), "Duplicate ProductId detected"
+          assert len(set(sku_ids)) == len(sku_ids), "Duplicate SkuId detected"
+          assert len(set(eans)) == len(eans), "Duplicate EAN detected"
+          assert all("brand new" not in r["Description"].lower() for r in rows)
+
+          print("Validated: 2000 SKUs, 250 sunglasses, 100 watches, no duplicate IDs/EANs")
           PY
 
       - name: Publish updated feed
