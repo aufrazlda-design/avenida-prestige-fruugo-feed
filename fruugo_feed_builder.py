@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Build Avenida Prestige's 2,000-SKU Fruugo feed.
+"""Build Avenida Prestige's 1,992-SKU Fruugo feed.
 
-1,900 BrandsGateway products are refreshed from SUPPLIER_FEED_URL on every run.
+1,892 BrandsGateway products are refreshed from SUPPLIER_FEED_URL on every run.
 100 watch rows are loaded from the validated Timeshop snapshot in data/watch_snapshot.b64.
 """
 
@@ -52,12 +52,12 @@ def load_selection() -> tuple[list[str], list[str], list[str], list[str], list[s
         len(bags) != 350
         or len(sunglasses) != 50
         or len(additional_bags) != 500
-        or len(additional_bags_2) != 800
+        or len(additional_bags_2) != 792
         or len(additional_sunglasses) != 200
     ):
         raise ValueError(
             "Expected 350 bags + 50 sunglasses + 500 additional bags "
-            "+ 800 new bags + 200 new sunglasses, got "
+            "+ 792 retained new bags + 200 new sunglasses, got "
             f"{len(bags)} + {len(sunglasses)} + {len(additional_bags)} "
             f"+ {len(additional_bags_2)} + {len(additional_sunglasses)}"
         )
@@ -277,8 +277,8 @@ def build(source: Path, output: Path) -> None:
         for pid in additional_sunglass_ids
     )
 
-    if len(rows) != 2000:
-        raise RuntimeError(f"Expected 2000 rows, got {len(rows)}")
+    if len(rows) != 1992:
+        raise RuntimeError(f"Expected 1992 rows, got {len(rows)}")
 
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8", newline="") as stream:
